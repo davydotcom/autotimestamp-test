@@ -15,7 +15,7 @@ class TestCSpec extends Specification {
     def cleanup() {
     }
 
-        void "lastUpdated should work for dynamic update false and versioning on TestC"() {
+    void "lastUpdated should work for dynamic update false and versioning on TestC"() {
         given:
         	def a = new TestC(name: 'David Estes')
         	a.save(flush:true)
@@ -28,5 +28,20 @@ class TestCSpec extends Specification {
         	a.refresh()
         then: 
         	a.lastUpdated > lastUpdated
+    }
+
+
+    void "autoTimestamp should work with updateAll for dynamic update false and versioning on TestC"() {
+        given:
+            def a = new TestC(name: 'David Estes')
+            a.save(flush:true)
+            a.refresh()
+            def lastUpdated = a.lastUpdated
+            sleep(5000)
+        when:
+            TestC.where{id == a.id}.updateAll(name: 'David R. Estes')
+            a.refresh()
+        then: 
+            a.lastUpdated > lastUpdated
     }
 }
